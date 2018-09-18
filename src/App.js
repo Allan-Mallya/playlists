@@ -3,10 +3,8 @@ import logo from './logo.svg';
 import './App.css';
 
 
-let defaulttextColor = '#fff';
-
 let defaultStyle = {
-  color: defaulttextColor,
+  color: '#fff',
 }
 
 class Aggregate extends Component{
@@ -56,17 +54,17 @@ class App extends Component {
 
         <h1 style={defaultStyle}>Title</h1>
 
-        <Aggregate/>
+          <Aggregate/>
 
-        <Aggregate/>
+          <Aggregate/>
 
-        <Filter/>
+          <Filter/>
 
-        <Playlist/>
+          <Playlist/>
 
-        <Playlist/>
+          <Playlist/>
 
-        <Playlist/>
+          <Playlist/>
 
       </div>
     );
