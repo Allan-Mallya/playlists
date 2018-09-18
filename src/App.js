@@ -52,7 +52,7 @@ class App extends Component {
     return (
       <div className="App" style={{...defaultStyle, 'height': '100%', 'width': '100%'}}>
 
-        <h1 style={defaultStyle}>Title</h1>
+        <h1 style={defaultStyle}>Titlezzzzz</h1>
 
           <Aggregate/>
 
