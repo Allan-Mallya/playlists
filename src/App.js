@@ -15,15 +15,15 @@ let fakeserverData = {
                           songs: [{name:'Yo', duration: 1234},{name : ' yo yo yoy oii',duration: 45623},{name: 'killa cam',duration: 12345}]
                        },
                        {
-                          name: 'MyFavs',
+                          name: 'MyFavs1',
                           songs: [{name:'Yo', duration: 1234},{name : ' yo yo yoy oii',duration: 45623},{name: 'killa cam',duration: 12345}]
                        },
                        {
-                          name: 'MyFavs',
+                          name: 'MyFavs2',
                           songs: [{name:'Yo', duration: 1234},{name : ' yo yo yoy oii',duration: 45623},{name: 'killa cam',duration: 12345}]
                        },
                        {
-                          name: 'MyFavs',
+                          name: 'MyFavs3',
                           songs: [{name:'Yo', duration: 1234},{name : ' yo yo yoy oii',duration: 45623},{name: 'killa cam',duration: 12345}]
                        }
                        ]
@@ -63,8 +63,8 @@ class HoursCounter extends Component{
 
 
 class Filter extends Component{
-
   render() {
+    
     return (
           <div style={defaultStyle}>
             <img/>
@@ -76,11 +76,16 @@ class Filter extends Component{
 
 class Playlist extends Component{
   render() {
+    
     return(
         <div style={{...defaultStyle, width: '25%', display: 'inline-block'}}>
           <img/>
-            <h3> Playlist Name</h3>
-            <ul><li>Song 1</li><li>Song 2</li><li>Song 3</li><li>Song 4</li></ul>
+            <h3>{this.props.playlist.name}</h3>
+            <ul>
+            {
+              this.props.playlist.songs.map(song=><li>{song.name}</li>)
+            }
+            </ul>
         </div>
       )
     }
@@ -120,12 +125,14 @@ class App extends Component {
           <HoursCounter playlists= {this.state.serverData.user.playlists} /> 
 
           <Filter/>
+         
+          {
+            this.state.serverData.user.playlists.map(playlist =>
+          <Playlist playlist = {playlist}/>    
+          
+          )}
 
-          <Playlist/>
-
-          <Playlist/>
-
-          <Playlist/>
+     
 
       </div> : <h1 style = {{...defaultStyle}}> Loading...</h1>
     }
