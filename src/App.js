@@ -15,7 +15,7 @@ let fakeserverData = {
                           songs: [{name:'Yo', duration: 1234},{name : ' yo yo yoy oii',duration: 45623},{name: 'killa cam',duration: 12345}]
                        },
                        {
-                          name: 'MyFavs1',
+                          name: 'Weekly',
                           songs: [{name:'Yo', duration: 1234},{name : ' yo yo yoy oii',duration: 45623},{name: 'killa cam',duration: 12345}]
                        },
                        {
@@ -65,10 +65,12 @@ class HoursCounter extends Component{
 class Filter extends Component{
   render() {
     
+
+
     return (
           <div style={defaultStyle}>
             <img/>
-              <input type = 'text'/>
+              <input type = 'text' onKeyUp={event =>this.props.onTextChange(event.target.value)}/>
           </div>
 
       );
@@ -81,7 +83,7 @@ class Playlist extends Component{
         <div style={{...defaultStyle, width: '25%', display: 'inline-block'}}>
           <img/>
             <h3>{this.props.playlist.name}</h3>
-            <ul>
+            <ul >
             {
               this.props.playlist.songs.map(song=><li>{song.name}</li>)
             }
@@ -96,9 +98,11 @@ class App extends Component {
 
   constructor(){
     super();
-    this.state = {serverData: {}}
+    this.state = { 
+      serverData: {},
+      filterString: ''
+    }
   }
-
 
   componentDidMount(){
     setTimeout(() =>
@@ -123,11 +127,11 @@ class App extends Component {
           <PlaylistCounter playlists= {this.state.serverData.user.playlists} /> 
 
           <HoursCounter playlists= {this.state.serverData.user.playlists} /> 
-
-          <Filter/>
-         
-          {
-            this.state.serverData.user.playlists.map(playlist =>
+          
+          <Filter onTextChange = {text=> this.setState({filterString : text})}/>
+          {this.state.serverData.user.playlists.filter(playlist=>
+            playlist.name.toLowerCase().includes(this.state.filterString.toLowerCase())
+            ).map(playlist =>
           <Playlist playlist = {playlist}/>    
           
           )}
