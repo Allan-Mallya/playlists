@@ -95,6 +95,11 @@ class App extends Component {
 
   componentDidMount(){
     let accessToken =queryString.parse(window.location.search).access_token;
+    
+    if(!accessToken)
+    {
+      return;
+    }
     var userID;
     var username;
 
