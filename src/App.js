@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import queryString from 'query-string';
 
 let defaultStyle = {
   color: '#fff',
@@ -12,18 +13,6 @@ let fakeserverData = {
                         playlists: [
                         {
                           name: 'MyFavs',
-                          songs: [{name:'Yo', duration: 1234},{name : ' yo yo yoy oii',duration: 45623},{name: 'killa cam',duration: 12345}]
-                       },
-                       {
-                          name: 'Weekly',
-                          songs: [{name:'Yo', duration: 1234},{name : ' yo yo yoy oii',duration: 45623},{name: 'killa cam',duration: 12345}]
-                       },
-                       {
-                          name: 'MyFavs2',
-                          songs: [{name:'Yo', duration: 1234},{name : ' yo yo yoy oii',duration: 45623},{name: 'killa cam',duration: 12345}]
-                       },
-                       {
-                          name: 'MyFavs3',
                           songs: [{name:'Yo', duration: 1234},{name : ' yo yo yoy oii',duration: 45623},{name: 'killa cam',duration: 12345}]
                        }
                        ]
@@ -81,7 +70,7 @@ class Playlist extends Component{
     
     return(
         <div style={{...defaultStyle, width: '25%', display: 'inline-block'}}>
-          <img/>
+          <img src = {this.props.playlist.image} style={{width :'160px'}}/>
             <h3>{this.props.playlist.name}</h3>
             <ul >
             {
@@ -105,17 +94,72 @@ class App extends Component {
   }
 
   componentDidMount(){
-    setTimeout(() =>
-    {
-    this.setState({serverData: fakeserverData})
-    }, 1000);
-  }
+    let accessToken =queryString.parse(window.location.search).access_token;
+    var userID;
+    var username;
+
+    fetch('https://api.spotify.com/v1/me', {
+      headers:{'Authorization' : 'Bearer ' + accessToken }})
+
+    .then((response)=> response.json())
+    .then((data)=> {
+        this.setState({serverData : {user :{name:data.display_name}}})
+        username = data.display_name;
+        userID = data.id;
+       
+      });
+    
+    
+    fetch('https://api.spotify.com/v1/me/playlists', {
+      headers:{'Authorization' : 'Bearer ' + accessToken }})
+
+    .then((response)=> response.json())
+    .then((data)=>{
+        let playlists = [];
+        let playlistobject = {};
+        let songsarray = [];
+        var songsobject = {}
+
+        data.items.map(item=>{
+          // console.log(item);
+          //console.log(item)
+          //https://api.spotify.com/v1/users/{item.id}/playlists/{item.id}/tracks
+          //get all the songs in the playlist
+          let playlistname = item.name;
+          fetch('https://api.spotify.com/v1/playlists/'+item.id+'/tracks', {
+              headers:{'Authorization' : 'Bearer ' + accessToken }})
+          .then((response)=>response.json())
+          .then((data)=>{
+                songsobject = data.items.map((item)=>{
+                      return({name: item.track.name, duration:item.track.duration_ms});
+                    });
+
+              songsarray.push(songsobject);
+          });
+          
+          
+          playlists.push({'name': item.name,'image' : item.images[0].url, 'songs' : songsarray})
+                           
+        });
+        
+        this.setState({serverData: {user:{'name' : username, 'playlists' : playlists}}});
+        
+    });
+    
+   }
+
+
 
   render() {
+        var test = function(){}
 
-    let playlistsToRender = this.state.serverData.user ? this.state.serverData.user.playlists.filter(playlist=>
-            playlist.name.toLowerCase().includes(this.state.filterString.toLowerCase())
-            ) : []
+    let playlistsToRender = 
+      this.state.serverData.user && this.state.serverData.user.playlists
+       ? this.state.serverData.user.playlists.filter(playlist=>
+            playlist.name.toLowerCase().includes(
+              this.state.filterString.toLowerCase())) 
+       : []
+
     return (
       <div className="App">
 
@@ -142,7 +186,20 @@ class App extends Component {
 
      
 
-      </div> : <h1 style = {{...defaultStyle}}> Loading...</h1>
+      </div> : <button onClick = {()=> window.location = "http://localhost:8888/login"}>Click Me</button>
+      
+    
+
+
+
+
+
+
+
+
+
+
+
     }
     </div>
     );
