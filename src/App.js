@@ -191,20 +191,15 @@ class App extends Component {
 
      
 
-      </div> : <button onClick = {()=> window.location = "http://localhost:8888/login"}>Click Me</button>
+      </div> : <button onClick = {()=>{
+        window.location = window.location.href.includes('localhost') 
+        ? "http://localhost:8888/login" 
+        : window.location = "https://allanplaylists.herokuapp.com"
+      }}
+      >Click Me</button>
       
-    
-
-
-
-
-
-
-
-
-
-
-
+      
+        
     }
     </div>
     );
