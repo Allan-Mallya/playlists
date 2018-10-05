@@ -74,7 +74,7 @@ class Playlist extends Component{
             <h3>{this.props.playlist.name}</h3>
             <ul >
             {
-              this.props.playlist.songs.map(song=><li>{song.name}</li>)
+              this.props.playlist.songs.slice(0,3).map(song=><li>{song.name}</li>)
             }
             </ul>
         </div>
@@ -124,30 +124,31 @@ class App extends Component {
         let playlistobject = {};
         let songsarray = [];
         var songsobject = {}
+        var duration = 0;
 
         data.items.map(item=>{
-          // console.log(item);
-          //console.log(item)
-          //https://api.spotify.com/v1/users/{item.id}/playlists/{item.id}/tracks
+        
           //get all the songs in the playlist
           let playlistname = item.name;
           fetch('https://api.spotify.com/v1/playlists/'+item.id+'/tracks', {
               headers:{'Authorization' : 'Bearer ' + accessToken }})
           .then((response)=>response.json())
           .then((data)=>{
+                
+                songsobject = {}
+                songsarray = [];
                 songsobject = data.items.map((item)=>{
-                      return({name: item.track.name, duration:item.track.duration_ms});
+                      return({name: item.track.name, duration: item.track.duration_ms});
                     });
-
-              songsarray.push(songsobject);
+                playlists.push({'name': item.name,'image' : item.images[0].url, 'songs' : songsobject})
+                this.setState({serverData: {user:{'name' : username, 'playlists' : playlists}}});
           });
-          
-          
-          playlists.push({'name': item.name,'image' : item.images[0].url, 'songs' : songsarray})
-                           
+              //console.log(songsobject);
+              //playlists.push({'name': item.name,'image' : item.images[0].url, 'songs' : songsobject})
+              //console.log("playlist is")
+              // playlists.push({'name': item.name,'image' : item.images[0].url, 'songs' : [songsobject]})
+              //console.log(playlists)        
         });
-        
-        this.setState({serverData: {user:{'name' : username, 'playlists' : playlists}}});
         
     });
     
@@ -160,11 +161,20 @@ class App extends Component {
 
     let playlistsToRender = 
       this.state.serverData.user && this.state.serverData.user.playlists
-       ? this.state.serverData.user.playlists.filter(playlist=>
-            playlist.name.toLowerCase().includes(
-              this.state.filterString.toLowerCase())) 
-       : []
+       ? this.state.serverData.user.playlists.filter((playlist)=>{
+            
+            let playlistmatch = playlist.name.toLowerCase().includes(this.state.filterString.toLowerCase());
+            //var tracksmatch;
 
+            let tracksmatch = playlist.songs.find((song)=>song.name.toLowerCase().includes(this.state.filterString.toLowerCase()))
+
+
+            return (playlistmatch || tracksmatch)
+
+
+
+          })
+       : []
     return (
       <div className="App">
 
